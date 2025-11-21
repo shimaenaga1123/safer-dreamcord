@@ -1,4 +1,5 @@
 import { calculatePP } from './performance';
+import * as cheerio from 'cheerio';
 
 export async function buildSolvedMessage(challengeId, solver, test = false) {
   let challengeInfo = null;
@@ -33,12 +34,11 @@ export async function buildSolvedMessage(challengeId, solver, test = false) {
     if (!response.ok) {
       throw Error(JSON.stringify(response));
     }
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(await response.text(), 'text/html');
-    const user = doc.querySelector('.user-profile');
-    nickname = user.querySelector('.nickname').textContent.trim().replace('`', "'");
-    introduction = user.querySelector('.intro-text').textContent.trim().replace('`', "'");
-    profile_image = user.querySelector('.user-icon > span > img')?.src;
+    const $ = cheerio.load(await response.text(), 'text/html');
+    const profile = $('.user-profile');
+    nickname = profile.find('.nickname').text().trim().replace('`', "'");
+    introduction = profile.find('.intro-text').text().trim().replace('`', "'");
+    profile_image = profile.find('.user-icon > span > img').attr('src');
   } catch (error) {
     console.error(error);
     return;
