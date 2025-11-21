@@ -1,5 +1,4 @@
 import { sendToAll } from '../module/dwebhook.js';
-import { buildSolvedMessage } from '../module/dmessage.js';
 
 const browserAPI = chrome; // chrome || browser || window.browser || window.chrome;
 
@@ -106,8 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const webhookMessage = await buildSolvedMessage(challengeId, true);
-      const result = await sendToAll(webhookMessage);
+      const result = await sendToAll(challengeId, true);
 
       if (result.status) {
         showStatusMessage('테스트 웹훅이 전송되었습니다.');

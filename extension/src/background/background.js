@@ -1,5 +1,4 @@
 import { sendToAll } from '../module/dwebhook.js';
-import { buildSolvedMessage } from '../module/dmessage.js';
 
 const browserAPI = chrome; // chrome || browser || window.browser || window.chrome;
 
@@ -14,8 +13,7 @@ if (browserAPI.webRequest?.onCompleted) {
         if (!challengeId) return;
 
         if (details.statusCode >= 200 && details.statusCode < 300) {
-          const message = await buildSolvedMessage(challengeId);
-          await sendToAll(message);
+          await sendToAll(challengeId);
         }
       }
     },

@@ -1,0 +1,7 @@
+name = "dreamcord-server"
+main = "src/index.js"
+compatibility_date = "2025-11-21"
+minify = true
+
+[observability.logs]
+enabled = true

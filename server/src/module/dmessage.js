@@ -1,29 +1,17 @@
-import { calculatePP } from './performance.js';
+import { calculatePP } from './performance';
 
-export async function buildSolvedMessage(challengeId, test = false) {
+export async function buildSolvedMessage(challengeId, player, test = false) {
   let challengeInfo = null;
 
   try {
     const response = await fetch(`https://dreamhack.io/api/v1/wargame/challenges/${challengeId}/`);
     if (response.ok) {
       challengeInfo = await response.json();
+    } else {
+      throw Error(JSON.stringify(response));
     }
   } catch (error) {
     console.error('문제 정보 가져오기 실패:', error);
-  }
-
-  const player_idx = challengeInfo.cnt_solvers - 1; // 바로바로 업데이트가 되는 것을 확인했기 때문에, 솔버 수에서 1을 빼줘야 합니다.
-
-  let player = null;
-  try {
-      const response = await fetch(`https://dreamhack.io/api/v1/wargame/challenges/${challengeId}/solvers/?limit=1&offset=${player_idx}&ordering=solved_at`);
-      console.log(response);
-      if (response.ok) {
-          const data = await response.json();
-          player = data.results[0].user;
-      }
-  } catch (error) {
-      console.error('솔버 정보 가져오기 실패:', error);
   }
 
   let valid = challengeInfo && player;
