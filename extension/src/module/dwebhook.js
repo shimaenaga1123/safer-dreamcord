@@ -32,7 +32,7 @@ export async function sendToAll(challengeId, test = false) {
     });
     if (response.ok) {
       const data = await response.json();
-      solver = data.results[0].user;
+      solver = data.results[0].user.id;
     } else {
       throw Error(JSON.stringify(response));
     }
