@@ -36,4 +36,4 @@ Dreamhack의 문제 풀이 현황을 디스코드 웹훅과 연동하여 알려 
 
 ## Credits
 
-이 프로젝트는 [https://github.com/NeoMaster831/dreamcord]를 기반으로 웹훅의 악용을 막기 위해 서버와 확장으로 나누어 설계되었습니다.
+이 프로젝트는 [Dreamcord](https://github.com/NeoMaster831/dreamcord)를 기반으로 웹훅의 악용을 막기 위해 서버와 확장으로 나누어 설계되었습니다.
