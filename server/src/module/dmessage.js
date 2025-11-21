@@ -54,7 +54,7 @@ export async function buildSolvedMessage(challengeId, solver, test = false) {
       title: valid ? `🎉 ${challengeInfo.title} 문제 해결!` : `🎉 Challenge #${challengeId} 문제 해결!`,
       description: valid ?
         `**해결자**\n` + `[\`${nickname}\`](https://dreamhack.io/users/${solver})` +
-        (introduction ? ` | \`${introduction === "아직 자기소개가 없습니다." ? "" : introduction}\`\n\n` : '\n\n') +
+        (introduction !== "아직 자기소개가 없습니다." ? ` | \`${introduction}\`\n\n` : '\n\n') +
         `**난이도**\n` + `LEVEL ${challengeInfo.difficulty}\n\n` +
         `**태그**\n` + `${challengeInfo.tags.map(tag => `#${tag}`).join(', ')}\n\n` +
         `**솔버 수**\n` + `${challengeInfo.cnt_solvers} solved / ${challengeInfo.hitcount} viewed` + (rate < 2 ? ` **(${rate.toFixed(2)}%)**\n\n` : ` (${rate.toFixed(2)}%)\n\n`) +
