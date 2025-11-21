@@ -35,8 +35,11 @@ export default {
       })
     }
 
+    console.log(`Solver Info: ${JSON.stringify(requestBody.solver)}`);
+
     try{
       const content = await buildSolvedMessage(requestBody.challengeId, requestBody.solver, requestBody.test);
+      console.log(`Message Sent: ${JSON.stringify(content)}`);
       const response = await fetch(
         new Request(env.DISCORD_WEBHOOK_URL, {
           method: 'POST',
