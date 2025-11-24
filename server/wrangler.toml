@@ -1,7 +1,10 @@
 name = "dreamcord-server"
-main = "src/index.js"
-compatibility_date = "2025-11-21"
-minify = true
+main = "build/index.js"
+compatibility_date = "2025-11-23"
+
+[build]
+command = "cargo install -q worker-build && worker-build --release"
 
 [observability.logs]
 enabled = true
+
