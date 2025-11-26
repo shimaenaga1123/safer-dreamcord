@@ -8,7 +8,12 @@ pub async fn build_solved_message(
     solver_id: &u32,
     test: &bool,
 ) -> reqwest::Result<SolvedMessage> {
-    let challenge_info = request::get_challenge(&challenge_id).await?;
+    let (challenge_info, solver) = tokio::join!(
+        request::get_challenge(&challenge_id),
+        request::get_user(&solver_id)
+    );
+    let challenge_info = challenge_info?;
+    let solver = solver?;
 
     let rate = challenge_info.cnt_solvers as f64 / challenge_info.hitcount as f64 * 100.0;
     let level_color = match challenge_info.difficulty {
@@ -21,8 +26,6 @@ pub async fn build_solved_message(
     };
 
     let pp = performance::calculate_pp(&challenge_info);
-
-    let solver = request::get_user(solver_id).await?;
 
     Ok(SolvedMessage {
         content: "".to_string(),

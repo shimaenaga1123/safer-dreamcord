@@ -1,6 +1,7 @@
 use crate::modules::types::*;
 use once_cell::sync::Lazy;
 use scraper::{Html, Selector};
+use std::time::Duration;
 
 static NICKNAME_SEL: Lazy<Selector> =
     Lazy::new(|| Selector::parse(".user-profile .nickname").unwrap());
@@ -8,19 +9,33 @@ static INTRO_SEL: Lazy<Selector> =
     Lazy::new(|| Selector::parse(".user-profile .intro-text").unwrap());
 static IMG_SEL: Lazy<Selector> =
     Lazy::new(|| Selector::parse(".user-profile .user-icon img").unwrap());
+static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
+    reqwest::Client::builder()
+        .pool_max_idle_per_host(10)
+        .connect_timeout(Duration::from_secs(5))
+        .timeout(Duration::from_secs(10))
+        .gzip(true)
+        .http2_prior_knowledge()
+        .build()
+        .unwrap()
+});
 
 pub async fn get_challenge(challenge_id: &String) -> reqwest::Result<ChallengeInfo> {
-    reqwest::get(format!(
-        "https://dreamhack.io/api/v1/wargame/challenges/{}",
-        challenge_id
-    ))
-    .await?
-    .json::<ChallengeInfo>()
-    .await
+    CLIENT
+        .get(format!(
+            "https://dreamhack.io/api/v1/wargame/challenges/{}",
+            challenge_id
+        ))
+        .send()
+        .await?
+        .json::<ChallengeInfo>()
+        .await
 }
 
 pub async fn get_user(user_id: &u32) -> reqwest::Result<UserInfo> {
-    let text = reqwest::get(format!("https://dreamhack.io/users/{}", user_id))
+    let text = CLIENT
+        .get(format!("https://dreamhack.io/users/{}", user_id))
+        .send()
         .await?
         .text()
         .await?;
