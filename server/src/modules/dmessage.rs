@@ -4,10 +4,10 @@ use crate::modules::types::*;
 use indoc::indoc;
 
 pub async fn build_solved_message(
-    challenge_id: String,
-    solver_id: u32,
-    test: bool,
-) -> worker::Result<SolvedMessage> {
+    challenge_id: &String,
+    solver_id: &u32,
+    test: &bool,
+) -> reqwest::Result<SolvedMessage> {
     let challenge_info = request::get_challenge(&challenge_id).await?;
 
     let rate = challenge_info.cnt_solvers as f64 / challenge_info.hitcount as f64 * 100.0;
@@ -62,7 +62,7 @@ pub async fn build_solved_message(
                 rate,
                 if rate < 2.0 { "**" } else { "" },
                 pp,
-                if test {
+                if *test {
                     "\n\n*이 메시지는 웹훅 테스트 메시지이며, 실제로 풀이된 것이 아닙니다.*"
                 } else {
                     ""
