@@ -13,7 +13,6 @@ static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
     reqwest::Client::builder()
         .pool_max_idle_per_host(10)
         .gzip(true)
-        .http2_prior_knowledge()
         .build()
         .unwrap()
 });
