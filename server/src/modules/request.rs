@@ -12,8 +12,6 @@ static IMG_SEL: Lazy<Selector> =
 static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
     reqwest::Client::builder()
         .pool_max_idle_per_host(10)
-        .connect_timeout(Duration::from_secs(5))
-        .timeout(Duration::from_secs(10))
         .gzip(true)
         .http2_prior_knowledge()
         .build()
@@ -23,7 +21,7 @@ static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
 pub async fn get_challenge(challenge_id: &String) -> reqwest::Result<ChallengeInfo> {
     CLIENT
         .get(format!(
-            "https://dreamhack.io/api/v1/wargame/challenges/{}",
+            "https://dreamhack.io/api/v1/wargame/challenges/{}/",
             challenge_id
         ))
         .send()
