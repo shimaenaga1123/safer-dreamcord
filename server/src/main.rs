@@ -15,9 +15,15 @@ async fn default(body: web::Json<RequestType>) -> HttpResponse {
     let message = match build_solved_message(&body.challengeId, &body.solver, &body.test).await {
         Ok(json_message) => match serde_json::to_string(&json_message) {
             Ok(json_string) => json_string,
-            Err(error) => return HttpResponse::InternalServerError().body(error.to_string()),
+            Err(error) => {
+                eprintln!("Failed to serialize JSON message: {}", error);
+                return HttpResponse::InternalServerError().body(error.to_string());
+            }
         },
-        Err(error) => return HttpResponse::InternalServerError().body(error.to_string()),
+        Err(error) => {
+            eprintln!("Failed to build solved message: {}", error);
+            return HttpResponse::InternalServerError().body(error.to_string());
+        }
     };
     match reqwest::Client::new()
         .post(URL.to_owned())
@@ -33,7 +39,10 @@ async fn default(body: web::Json<RequestType>) -> HttpResponse {
                 HttpResponse::BadGateway().body(response.status().to_string())
             }
         }
-        Err(error) => HttpResponse::InternalServerError().body(error.to_string()),
+        Err(error) => {
+            eprintln!("Failed to send request: {}", error);
+            HttpResponse::InternalServerError().body(error.to_string())
+        }
     }
 }
 
