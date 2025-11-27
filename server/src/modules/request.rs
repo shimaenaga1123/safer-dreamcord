@@ -1,7 +1,6 @@
 use crate::modules::types::*;
 use once_cell::sync::Lazy;
 use scraper::{Html, Selector};
-use std::time::Duration;
 
 static NICKNAME_SEL: Lazy<Selector> =
     Lazy::new(|| Selector::parse(".user-profile .nickname").unwrap());
