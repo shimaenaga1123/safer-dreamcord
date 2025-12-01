@@ -16,7 +16,7 @@ static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
         .unwrap()
 });
 
-pub async fn get_challenge(challenge_id: &String) -> reqwest::Result<ChallengeInfo> {
+pub async fn get_challenge(challenge_id: &u32) -> reqwest::Result<ChallengeInfo> {
     CLIENT
         .get(format!(
             "https://dreamhack.io/api/v1/wargame/challenges/{}/",

@@ -39,7 +39,7 @@ pub struct SolvedMessage {
 
 #[derive(Serialize, Deserialize)]
 pub struct RequestType {
-    pub challengeId: String,
+    pub challenge_id: u32,
     pub solver: u32,
     pub test: bool,
 }

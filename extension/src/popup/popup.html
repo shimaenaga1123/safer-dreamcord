@@ -1,25 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>Dreamcord</title>
-  <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-  <div class="container">
-    <h1>Dreamcord</h1>
-    <div id="status-message"></div>
-    <div class="webhooks-container">
-      <div id="webhooks-list">
-        <!-- Dynamically added webhooks will appear here -->
-      </div>
-      <button id="add-webhook" class="add-button">+ 새 웹훅 추가</button>
-    </div>
-    <div class="debug-container">
-      <input type="number" id="debug-challenge-id" placeholder="Challenge ID" min="1">
-      <button id="debug-test" class="debug-button">Test Webhook</button>
-    </div>
-  </div>
-  <script src="popup.js" type="module"></script>
-</body>
-</html> 
+    <head>
+        <meta charset="UTF-8" />
+        <title>Dreamcord</title>
+        <link rel="stylesheet" href="popup.css" />
+    </head>
+    <body>
+        <div class="container">
+            <h1>Dreamcord</h1>
+            <div id="status-message"></div>
+            <div class="webhooks-container">
+                <div id="webhooks-list">
+                    <!-- Dynamically added webhooks will appear here -->
+                </div>
+                <button id="add-webhook" class="add-button">
+                    + 새 웹훅 추가
+                </button>
+            </div>
+            <div class="debug-container">
+                <input
+                    type="number"
+                    id="debug-challenge-id"
+                    placeholder="Challenge ID"
+                    min="1"
+                />
+                <button id="debug-test" class="debug-button">
+                    Test Webhook
+                </button>
+                <button id="clear-user-info" class="clear-button">
+                    Clear User Info
+                </button>
+            </div>
+        </div>
+        <script src="popup.js" type="module"></script>
+    </body>
+</html>

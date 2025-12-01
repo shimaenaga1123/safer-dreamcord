@@ -1,123 +1,136 @@
 body {
-  width: 350px;
-  padding: 15px;
-  font-family: Arial, sans-serif;
+    width: 350px;
+    padding: 15px;
+    font-family: Arial, sans-serif;
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 h1 {
-  margin: 0;
-  font-size: 1.5em;
-  text-align: center;
+    margin: 0;
+    font-size: 1.5em;
+    text-align: center;
 }
 
 .webhooks-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .webhook-item {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  background-color: #f5f5f5;
-  padding: 8px;
-  border-radius: 4px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 8px;
+    border-radius: 4px;
 }
 
 .webhook-item input {
-  flex: 1;
-  padding: 6px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    flex: 1;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .webhook-item .save-button {
-  padding: 6px 12px;
-  background-color: #7289da;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+    padding: 6px 12px;
+    background-color: #7289da;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .webhook-item .save-button.modified {
-  background-color: #43b581;
+    background-color: #43b581;
 }
 
 .webhook-item .delete-button {
-  padding: 6px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+    padding: 6px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .add-button {
-  padding: 8px;
-  background-color: #43b581;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
+    padding: 8px;
+    background-color: #43b581;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
 button:hover {
-  opacity: 0.9;
+    opacity: 0.9;
 }
 
 #status-message {
-  color: #4CAF50;
-  font-size: 14px;
-  margin: 4px 0;
-  min-height: 20px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  text-align: center;
+    color: #4caf50;
+    font-size: 14px;
+    margin: 4px 0;
+    min-height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: center;
 }
 
 #status-message.show {
-  opacity: 1;
+    opacity: 1;
 }
 
 #status-message.error {
-  color: #dc3545;
+    color: #dc3545;
 }
 
 /* 개발용 디버그 스타일 */
 .debug-container {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px dashed #ccc;
-  display: flex;
-  gap: 8px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #ccc;
+    display: flex;
+    gap: 8px;
 }
 
 #debug-challenge-id {
-  flex: 1;
-  padding: 6px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    flex: 1;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .debug-button {
-  padding: 6px 12px;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+    padding: 6px 12px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .debug-button:hover {
-  opacity: 0.9;
+    opacity: 0.9;
+}
+
+.clear-button {
+    padding: 6px 12px;
+    background-color: orangered;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.clear-button:hover {
+    opacity: 0.9;
 }

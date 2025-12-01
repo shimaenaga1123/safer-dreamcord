@@ -16,14 +16,14 @@ static URL: Lazy<String> = Lazy::new(|| {
 #[post("/")]
 async fn default(body: web::Json<modules::types::RequestType>) -> HttpResponse {
     info!(
-        challengeId = %body.challengeId,
+        challenge_id = %body.challenge_id,
         solver = %body.solver,
         test = %body.test,
         "received request"
     );
 
     let message =
-        match modules::dmessage::build_solved_message(&body.challengeId, &body.solver, &body.test)
+        match modules::dmessage::build_solved_message(&body.challenge_id, &body.solver, &body.test)
             .await
         {
             Ok(json_message) => match serde_json::to_string(&json_message) {
@@ -36,7 +36,7 @@ async fn default(body: web::Json<modules::types::RequestType>) -> HttpResponse {
             Err(err) => {
                 error!(
                     error = %err,
-                    challengeId = %body.challengeId,
+                    challenge_id = %body.challenge_id,
                     "failed to build solved message"
                 );
                 return HttpResponse::InternalServerError().body(err.to_string());

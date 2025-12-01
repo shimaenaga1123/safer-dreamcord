@@ -116,4 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
       showStatusMessage(`웹훅 전송에 실패했습니다. ${error}`, true);
     }
   });
+
+  const clearUserInfoButton = document.getElementById('clear-user-info');
+  clearUserInfoButton?.addEventListener('click', async () => {
+    await browserAPI.storage.sync.remove(['userid']);
+    showStatusMessage('사용자 정보가 삭제되었습니다.', true);
+  });
 });

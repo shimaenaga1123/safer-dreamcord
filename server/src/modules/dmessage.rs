@@ -4,7 +4,7 @@ use crate::modules::types::*;
 use indoc::indoc;
 
 pub async fn build_solved_message(
-    challenge_id: &String,
+    challenge_id: &u32,
     solver_id: &u32,
     test: &bool,
 ) -> reqwest::Result<SolvedMessage> {
