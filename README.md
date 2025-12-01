@@ -16,7 +16,7 @@ Dreamhack의 문제 풀이 현황을 디스코드 웹훅과 연동하여 알려 
 
 본 프로그램을 설치하는 방법은 다음과 같습니다.
 
-1. [최신 버전 crx 파일](https://github.com/shimaenaga1123/safer-dreamcord/releases/download/2.0.2/safer-dreamcord.crx) 다운로드
+1. [최신 버전 crx 파일](https://github.com/shimaenaga1123/safer-dreamcord/releases/download/2.0.3/safer-dreamcord.crx) 다운로드
 2. 크롬 브라우저에 추가하기 클릭하기
 3. 제공받은 서버 URL을 복사해서 붙여넣기 합니다.
 
