@@ -1,20 +1,14 @@
 use actix_cors::Cors;
 use actix_web::{http::header, *};
-use tracing::{error, info, Level};
+use tracing::{info, Level};
 use tracing_actix_web::TracingLogger;
 use tracing_subscriber::FmtSubscriber;
 
 mod modules;
-use dotenv::dotenv;
-use once_cell::sync::Lazy;
-
-static URL: Lazy<String> = Lazy::new(|| {
-    dotenv().ok();
-    std::env::var("DISCORD_WEBHOOK_URL").expect("DISCORD_WEBHOOK_URL must be set")
-});
+use crate::modules::types::AppError;
 
 #[post("/")]
-async fn default(body: web::Json<modules::types::RequestType>) -> HttpResponse {
+async fn default(body: web::Json<modules::types::RequestType>) -> Result<impl Responder, AppError> {
     info!(
         challenge_id = %body.challenge_id,
         solver = %body.solver,
@@ -23,47 +17,12 @@ async fn default(body: web::Json<modules::types::RequestType>) -> HttpResponse {
     );
 
     let message =
-        match modules::dmessage::build_solved_message(&body.challenge_id, &body.solver, &body.test)
-            .await
-        {
-            Ok(json_message) => match serde_json::to_string(&json_message) {
-                Ok(json_string) => json_string,
-                Err(err) => {
-                    error!(error = %err, "failed to serialize JSON message");
-                    return HttpResponse::InternalServerError().body(err.to_string());
-                }
-            },
-            Err(err) => {
-                error!(
-                    error = %err,
-                    challenge_id = %body.challenge_id,
-                    "failed to build solved message"
-                );
-                return HttpResponse::InternalServerError().body(err.to_string());
-            }
-        };
+        modules::dmessage::build_solved_message(&body.challenge_id, &body.solver, &body.test)
+            .await?;
 
-    match reqwest::Client::new()
-        .post(URL.to_owned())
-        .header("Content-Type", "application/json")
-        .body(message)
-        .send()
-        .await
-    {
-        Ok(response) => {
-            if response.status().is_success() {
-                info!("webhook sent successfully");
-                HttpResponse::Ok().finish()
-            } else {
-                error!(status = %response.status(), "webhook returned error");
-                HttpResponse::BadGateway().body(response.status().to_string())
-            }
-        }
-        Err(err) => {
-            error!(error = %err, "failed to send webhook");
-            HttpResponse::InternalServerError().body(err.to_string())
-        }
-    }
+    modules::dmessage::send_message(message).await?;
+    info!("webhook sent successfully");
+    Ok(HttpResponse::Ok().finish())
 }
 
 #[actix_web::main]

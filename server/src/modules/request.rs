@@ -1,4 +1,5 @@
 use crate::modules::types::*;
+use anyhow::Result;
 use once_cell::sync::Lazy;
 use scraper::{Html, Selector};
 
@@ -16,23 +17,25 @@ static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
         .unwrap()
 });
 
-pub async fn get_challenge(challenge_id: &u32) -> reqwest::Result<ChallengeInfo> {
-    CLIENT
+pub async fn get_challenge(challenge_id: &u32) -> Result<ChallengeInfo> {
+    let response = CLIENT
         .get(format!(
             "https://dreamhack.io/api/v1/wargame/challenges/{}/",
             challenge_id
         ))
         .send()
         .await?
-        .json::<ChallengeInfo>()
-        .await
+        .error_for_status()?;
+
+    Ok(response.json::<ChallengeInfo>().await?)
 }
 
-pub async fn get_user(user_id: &u32) -> reqwest::Result<UserInfo> {
+pub async fn get_user(user_id: &u32) -> Result<UserInfo> {
     let text = CLIENT
         .get(format!("https://dreamhack.io/users/{}", user_id))
         .send()
         .await?
+        .error_for_status()?
         .text()
         .await?;
 

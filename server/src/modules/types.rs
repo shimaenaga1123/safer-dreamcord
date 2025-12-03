@@ -1,4 +1,34 @@
+use actix_web::{http::StatusCode, *};
 use serde::{Deserialize, Serialize};
+use serde_json::json;
+use tracing::error;
+
+#[derive(Debug)]
+pub struct AppError(anyhow::Error);
+impl std::fmt::Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        error!("{}", self.0);
+        Ok(())
+    }
+}
+
+impl ResponseError for AppError {
+    fn error_response(&self) -> HttpResponse {
+        HttpResponse::InternalServerError().json(json!({
+            "error": self.0.to_string()
+        }))
+    }
+
+    fn status_code(&self) -> StatusCode {
+        StatusCode::INTERNAL_SERVER_ERROR
+    }
+}
+
+impl From<anyhow::Error> for AppError {
+    fn from(err: anyhow::Error) -> Self {
+        AppError(err)
+    }
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct ChallengeInfo {

@@ -1,13 +1,21 @@
 use crate::modules::performance;
 use crate::modules::request;
 use crate::modules::types::*;
+use anyhow::Result;
+use dotenv::dotenv;
 use indoc::indoc;
+use once_cell::sync::Lazy;
+
+static URL: Lazy<String> = Lazy::new(|| {
+    dotenv().ok();
+    std::env::var("DISCORD_WEBHOOK_URL").expect("DISCORD_WEBHOOK_URL must be set")
+});
 
 pub async fn build_solved_message(
     challenge_id: &u32,
     solver_id: &u32,
     test: &bool,
-) -> reqwest::Result<SolvedMessage> {
+) -> Result<String> {
     let (challenge_info, solver) = tokio::join!(
         request::get_challenge(&challenge_id),
         request::get_user(&solver_id)
@@ -27,7 +35,7 @@ pub async fn build_solved_message(
 
     let pp = performance::calculate_pp(&challenge_info);
 
-    Ok(SolvedMessage {
+    let message = SolvedMessage {
         content: "".to_string(),
         embeds: vec![Embed {
             title: format!("🎉 {} 문제 해결!", challenge_info.title),
@@ -78,5 +86,17 @@ pub async fn build_solved_message(
                 url: solver.profile_image,
             },
         }],
-    })
+    };
+
+    Ok(serde_json::to_string(&message)?)
+}
+
+pub async fn send_message(message: String) -> Result<()> {
+    let _ = reqwest::Client::new()
+        .post(URL.to_owned())
+        .header("Content-Type", "application/json")
+        .body(message)
+        .send()
+        .await?;
+    Ok(())
 }
