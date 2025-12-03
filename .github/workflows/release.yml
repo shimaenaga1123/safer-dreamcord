@@ -161,3 +161,7 @@ jobs:
           files: |
             artifacts/extension/safer-dreamcord-extension.zip
             artifacts/extension/safer-dreamcord.crx
+            artifacts/server/safer-dreamcord-server-linux-x64
+            artifacts/server/safer-dreamcord-server-macos-x64
+            artifacts/server/safer-dreamcord-server-macos-arm64
+            artifacts/server/safer-dreamcord-server-windows-x64.exe
