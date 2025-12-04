@@ -6,7 +6,7 @@ use tracing::error;
 #[derive(Debug)]
 pub struct AppError(anyhow::Error);
 impl std::fmt::Display for AppError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, _f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         error!("{}", self.0);
         Ok(())
     }

@@ -108,12 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await sendToAll(challengeId, true);
 
       if (result.status) {
-        showStatusMessage('테스트 웹훅이 전송되었습니다.');
+        let message = result.content;
+        if (result.preview) {
+          message += `\n제목: ${result.preview.title}\n난이도: LEVEL ${result.preview.difficulty}\n닉네임: ${result.preview.nickname}`;
+        }
+        showStatusMessage(message);
       } else {
-        showStatusMessage(`웹훅 전송에 실패했습니다. ${result.content}`, true);
+        showStatusMessage(`검증 실패: ${result.content}`, true);
       }
     } catch (error) {
-      showStatusMessage(`웹훅 전송에 실패했습니다. ${error}`, true);
+      showStatusMessage(`오류 발생: ${error}`, true);
     }
   });
 

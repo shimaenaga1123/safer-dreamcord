@@ -5,10 +5,10 @@ use tracing_actix_web::TracingLogger;
 use tracing_subscriber::FmtSubscriber;
 
 mod modules;
-use crate::modules::types::AppError;
+use crate::modules::*;
 
 #[post("/")]
-async fn default(body: web::Json<modules::types::RequestType>) -> Result<impl Responder, AppError> {
+async fn default(body: web::Json<types::RequestType>) -> Result<impl Responder, types::AppError> {
     info!(
         challenge_id = %body.challenge_id,
         solver = %body.solver,
@@ -17,12 +17,18 @@ async fn default(body: web::Json<modules::types::RequestType>) -> Result<impl Re
     );
 
     let message =
-        modules::dmessage::build_solved_message(&body.challenge_id, &body.solver, &body.test)
-            .await?;
+        dmessage::build_solved_message(&body.challenge_id, &body.solver, &body.test).await?;
 
-    modules::dmessage::send_message(message).await?;
-    info!("webhook sent successfully");
-    Ok(HttpResponse::Ok().finish())
+    if body.test {
+        info!("test mode: returning message without sending webhook");
+        Ok(HttpResponse::Ok()
+            .content_type("application/json")
+            .body(message))
+    } else {
+        dmessage::send_message(message).await?;
+        info!("webhook sent successfully");
+        Ok(HttpResponse::Ok().finish())
+    }
 }
 
 #[actix_web::main]
@@ -43,7 +49,7 @@ async fn main() -> std::io::Result<()> {
             .max_age(86400);
         App::new()
             .wrap(cors)
-            .wrap(TracingLogger::<modules::logger::CustomRootSpanBuilder>::new())
+            .wrap(TracingLogger::<logger::CustomRootSpanBuilder>::new())
             .service(default)
     })
     .bind(("127.0.0.1", 8080))?

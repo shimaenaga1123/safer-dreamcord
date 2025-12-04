@@ -123,12 +123,20 @@ jobs:
           cd extension
           zip -r ../safer-dreamcord-extension.zip . -x "*.git*"
 
+      - name: Build CRX
+        uses: cardinalby/webext-buildtools-chrome-crx-action@v2
+        with:
+          zipFilePath: safer-dreamcord-extension.zip
+          crxFilePath: safer-dreamcord-extension.crx
+          privateKey: ${{ secrets.CHROME_CRX_PRIVATE_KEY }}
+
       - name: Upload extension artifacts
         uses: actions/upload-artifact@v4
         with:
           name: extension
           path: |
             safer-dreamcord-extension.zip
+            safer-dreamcord-extension.crx
 
   create-release:
     name: Create Release
@@ -154,7 +162,21 @@ jobs:
           generate_release_notes: true
           files: |
             artifacts/extension/safer-dreamcord-extension.zip
+            artifacts/extension/safer-dreamcord-extesnion.crx
             artifacts/server-linux/safer-dreamcord-server-linux-x64
             artifacts/server-macos/safer-dreamcord-server-macos-x64
             artifacts/server-macos-arm/safer-dreamcord-server-macos-arm64
             artifacts/server-windows/safer-dreamcord-server-windows-x64.exe
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Deploy on Chrome Webstore
+        run: bunx chrome-webstore-upload-cli publish --source artifacts/extension/safer-dreamcord-extesnion.crx
+        env:
+          EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
