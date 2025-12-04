@@ -162,7 +162,7 @@ jobs:
           generate_release_notes: true
           files: |
             artifacts/extension/safer-dreamcord-extension.zip
-            artifacts/extension/safer-dreamcord-extesnion.crx
+            artifacts/extension/safer-dreamcord-extension.crx
             artifacts/server-linux/safer-dreamcord-server-linux-x64
             artifacts/server-macos/safer-dreamcord-server-macos-x64
             artifacts/server-macos-arm/safer-dreamcord-server-macos-arm64
@@ -174,7 +174,7 @@ jobs:
           bun-version: latest
 
       - name: Deploy on Chrome Webstore
-        run: bunx chrome-webstore-upload-cli publish --source artifacts/extension/safer-dreamcord-extesnion.crx
+        run: bunx chrome-webstore-upload-cli publish --source artifacts/extension/safer-dreamcord-extension.crx
         env:
           EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
