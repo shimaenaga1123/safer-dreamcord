@@ -6,6 +6,10 @@ pub struct CustomRootSpanBuilder;
 
 impl RootSpanBuilder for CustomRootSpanBuilder {
     fn on_request_start(request: &dev::ServiceRequest) -> Span {
+        if request.method() == http::Method::OPTIONS {
+            return Span::none();
+        }
+
         let peer_ip = request
             .connection_info()
             .peer_addr()

@@ -1,6 +1,6 @@
 use actix_cors::Cors;
 use actix_web::{http::header, *};
-use tracing::{info, Level};
+use tracing::{info, warn, Level};
 use tracing_actix_web::TracingLogger;
 use tracing_subscriber::FmtSubscriber;
 
@@ -8,7 +8,19 @@ mod modules;
 use crate::modules::*;
 
 #[post("/")]
-async fn default(body: web::Json<types::RequestType>) -> Result<impl Responder, types::AppError> {
+async fn default(body: web::Bytes) -> Result<impl Responder, types::AppError> {
+    let body: types::RequestType = match serde_json::from_slice(&body) {
+        Ok(b) => b,
+        Err(e) => {
+            warn!(
+                error = %e,
+                body = %String::from_utf8_lossy(&body),
+                "failed to deserialize request body"
+            );
+            return Ok(HttpResponse::BadRequest().finish());
+        }
+    };
+
     info!(
         challenge_id = %body.challenge_id,
         solver = %body.solver,
