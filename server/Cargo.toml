@@ -1,6 +1,6 @@
 [package]
 name = "server"
-version = "0.1.0"
+version = "" 
 edition = "2021"
 authors = ["shimaenaga <admin@shimaenaga.dev>"]
 
