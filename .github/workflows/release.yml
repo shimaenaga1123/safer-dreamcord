@@ -156,8 +156,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit, files are already up-to-date."
           else
-            git commit -m "chore(release): Bump versions to v${VERSION}"
-            git push origin HEAD:${{ github.ref_name }} # Push to the branch of the tag
+            git commit -m "bump versions to v${VERSION}"
+            git push origin HEAD:${{ github.ref_name }} --force
           fi
 
   create-release:
