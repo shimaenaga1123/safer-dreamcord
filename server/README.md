@@ -1,7 +1,11 @@
 # dreamcord-server
 
-1. Discord에서 웹훅을 생성합니다.
-2. .env에 DISCORD_WEBHOOK_URL을 설정합니다.
-3. `cargo run`으로 서버를 실행합니다.
+## How to Run
 
-배포시 표시되는 URL 또는 Cloudflare Dashboard에서 연결한 URL을 Chrome 확장에 연결하면 됩니다.
+1. Discord에서 웹훅을 생성합니다.
+2. Docker를 활용해서 실행합니다.
+
+```sh
+   docker pull ghcr.io/shimaenaga1123/safer-dreamcord:latest
+   docker run -e DISCORD_WEBHOOK_URL={위에서 생성한 웹훅} -p 8080:8080 ghcr.io/shimaenaga1123/safer-dreamcord:latest
+```

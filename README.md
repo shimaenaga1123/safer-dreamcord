@@ -14,18 +14,11 @@ Dreamhack의 문제 풀이 현황을 디스코드 웹훅과 연동하여 알려 
 
 ## Install
 
-본 프로그램을 설치하는 방법은 다음과 같습니다.
+본 프로그램을 설치/사용하는 방법은 다음과 같습니다.
 
 1. [크롬 웹 스토어 링크](https://chromewebstore.google.com/detail/safer-dreamcord/nleeioeanmgjaogedfdlpgamjoimlbnl)에서 설치하기
-2. 제공받은 서버 URL을 복사해서 붙여넣기 (직접 서버 배포시, 깃허브 릴리즈 있는 파일 사용)
-
-<img src="https://github.com/user-attachments/assets/38128456-83fa-4480-bae1-6d74053972c7" width=500>
-   
-4. 완료!
-
-### To-dos
-
-- [ ] CTF 내에서의 문제에 대해 아직 검증을 하지 않았습니다.
+2. 세팅된 서버 URL을 복사해서 붙여넣기 (서버 배포 방법은 /server/README.md를 참고하세요)
+3. 완료!
 
 ## Credits
 
