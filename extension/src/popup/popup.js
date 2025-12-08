@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       statusMessage.classList.remove('show');
       statusMessage.classList.remove('error');
-    }, 2000);
+    }, 5000);
   }
 
   function loadWebhooks() {
