@@ -11,12 +11,52 @@ permissions:
   packages: write
 
 jobs:
-  build-docker:
-    name: Build and Push Docker Image
+  prepare-versions:
+    name: Prepare Version Files
     runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get-version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update versions in manifest.json and Cargo.toml
+        run: |
+          VERSION=${{ steps.get-version.outputs.version }}
+          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${VERSION}\" /" extension/manifest.json
+          sed -i "s/^version = \".*\"/version = \"${VERSION}\" /" server/Cargo.toml
+
+      - name: Upload modified files for subsequent jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: versioned-files
+          path: |
+            extension/manifest.json
+            server/Cargo.toml
+
+  build-docker:
+    name: Build Multi-Platform Docker Image
+    runs-on: ubuntu-latest
+    needs: prepare-versions
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download versioned files
+        uses: actions/download-artifact@v4
+        with:
+          name: versioned-files
+          path: .
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -39,7 +79,7 @@ jobs:
             type=semver,pattern={{major}}
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Build and push Docker image
+      - name: Build and push multi-platform Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./server
@@ -47,40 +87,27 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   build-extension:
     name: Build Extension
     runs-on: ubuntu-latest
+    needs: prepare-versions
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Get version from tag
-        id: version
-        run: |
-          if [ "${{ github.ref_type }}" = "tag" ]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          else
-            VERSION="latest"
-          fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Download versioned files
+        uses: actions/download-artifact@v4
+        with:
+          name: versioned-files
+          path: .
 
-      - name: Update manifest.json with new version
-        if: github.ref_type == 'tag'
-        run: |
-          VERSION=${{ steps.version.outputs.version }}
-          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${VERSION}\"/" extension/manifest.json
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add extension/manifest.json
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Update manifest.json with release v${VERSION}"
-            git push origin HEAD:${{ github.event.repository.default_branch }}
-          fi
+      - name: Get version from previous job output
+        id: version
+        run: echo "version=${{ needs.prepare-versions.outputs.version }}" >> $GITHUB_OUTPUT
 
       - name: Create extension ZIP
         run: |
@@ -102,9 +129,40 @@ jobs:
             safer-dreamcord-extension.zip
             safer-dreamcord-extension.crx
 
+  commit-versions:
+    name: Commit Version Updates
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    needs: [build-docker, build-extension]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from previous job output
+        id: version
+        run: echo "version=${{ needs.prepare-versions.outputs.version }}" >> $GITHUB_OUTPUT
+
+      - name: Re-update versions for commit (to ensure current state)
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${VERSION}\" /" extension/manifest.json
+          sed -i "s/^version = \".*\"/version = \"${VERSION}\" /" server/Cargo.toml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add extension/manifest.json server/Cargo.toml
+          if git diff --staged --quiet; then
+            echo "No changes to commit, files are already up-to-date."
+          else
+            git commit -m "chore(release): Bump versions to v${VERSION}"
+            git push origin HEAD:${{ github.ref_name }} # Push to the branch of the tag
+          fi
+
   create-release:
     name: Create Release
-    needs: [build-extension, build-docker]
+    needs: [build-extension, build-docker, commit-versions]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

@@ -25,4 +25,5 @@ anyhow = "1.0.100"
 [profile.release]
 lto = true
 strip = true
-codegen-units = 1
+codegen-units = 16
+opt-level = 3
