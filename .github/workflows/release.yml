@@ -192,7 +192,7 @@ jobs:
           bun-version: latest
 
       - name: Deploy on Chrome Webstore
-        run: bunx chrome-webstore-upload-cli upload --auto-publish --source artifacts/extension/safer-dreamcord-extension.zip
+        run: bunx chrome-webstore-upload-cli upload --auto-publish --source artifacts/extension/safer-dreamcord-extension.crx
         env:
           EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
