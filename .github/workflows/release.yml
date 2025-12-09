@@ -202,35 +202,29 @@ jobs:
 
       - name: Deploy on Chrome Webstore
         run: |
-          ACCESS_TOKEN=$(curl -s -X POST https://oauth2.googleapis.com/token \
+          TOKEN=$(curl -s -X POST https://oauth2.googleapis.com/token \
             -d "client_id=$CLIENT_ID" \
             -d "client_secret=$CLIENT_SECRET" \
             -d "refresh_token=$REFRESH_TOKEN" \
             -d "grant_type=refresh_token" | jq -r '.access_token')
 
-          UPLOAD_RESULT=$(curl -s -X PUT \
-            -H "Authorization: Bearer $ACCESS_TOKEN" \
-            -H "x-goog-api-version: 2" \
+          UPLOAD_RESULT=$(curl -s -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-Goog-Upload-Protocol: raw" \
+            -H "X-Goog-Upload-File-Name: safer-dreamcord-extension.crx" \
             -T artifacts/extension/safer-dreamcord-extension.crx \
-            "https://www.googleapis.com/upload/chromewebstore/v1.1/items/$EXTENSION_ID")
+            "https://chromewebstore.googleapis.com/upload/v2/publishers/$PUBLISHER_ID/items/$EXTENSION_ID:upload")
 
           echo "Upload result: $UPLOAD_RESULT"
 
-          UPLOAD_STATE=$(echo $UPLOAD_RESULT | jq -r '.uploadState')
-          if [ "$UPLOAD_STATE" != "SUCCESS" ]; then
-            echo "Upload failed: $UPLOAD_RESULT"
-            exit 1
-          fi
-
           PUBLISH_RESULT=$(curl -s -X POST \
-            -H "Authorization: Bearer $ACCESS_TOKEN" \
-            -H "x-goog-api-version: 2" \
-            -H "Content-Length: 0" \
-            "https://www.googleapis.com/chromewebstore/v1.1/items/$EXTENSION_ID/publish")
+            -H "Authorization: Bearer $TOKEN" \
+            "https://chromewebstore.googleapis.com/v2/publishers/$PUBLISHER_ID/items/$EXTENSION_ID:publish")
 
           echo "Publish result: $PUBLISH_RESULT"
         env:
           EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+          PUBLISHER_ID: ${{ secrets.PUBLISHER_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
