@@ -1,7 +1,7 @@
 use crate::modules::types::*;
 use anyhow::Result;
-use once_cell::sync::Lazy;
 use dom_query::Document;
+use once_cell::sync::Lazy;
 
 static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
     reqwest::Client::builder()

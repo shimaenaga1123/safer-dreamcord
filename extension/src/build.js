@@ -26,22 +26,15 @@ async function buildExtension() {
 			dir: path.join(outputDir, "js"),
 			format: "esm",
 			entryFileNames: "[name].js",
+			minify: true,
 		},
 	});
 
 	await bundle.write();
 
-	const manifestSourcePath = path.join(projectRoot, "manifest.json");
-	const manifestDestinationPath = path.join(outputDir, "manifest.json");
-	const manifestContent = await fs.readFile(manifestSourcePath, "utf-8");
-	const manifest = JSON.parse(manifestContent);
-
-	manifest.background.service_worker = "background.js";
-	manifest.action.default_popup = "popup.html";
-
-	await fs.writeFile(
-		manifestDestinationPath,
-		JSON.stringify(manifest, null, 2),
+	await fs.copyFile(
+		path.join(projectRoot, "manifest.json"),
+		path.join(outputDir, "manifest.json"),
 	);
 
 	await fs.copyFile(
