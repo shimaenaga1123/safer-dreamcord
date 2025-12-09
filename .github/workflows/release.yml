@@ -79,6 +79,16 @@ jobs:
             type=semver,pattern={{major}}
             type=raw,value=latest,enable={{is_default_branch}}
 
+      - name: Inject cache into Docker
+        uses: reproducible-containers/buildkit-cache-dance@v3
+        with:
+          cache-map: |
+            {
+              "rust-cargo-registry": "/usr/local/cargo/registry",
+              "rust-cargo-git": "/usr/local/cargo/git",
+              "rust-target": "/app/target"
+            }
+
       - name: Build and push multi-platform Docker image
         uses: docker/build-push-action@v5
         with:
