@@ -64,8 +64,7 @@ extension/
 
 ### 기술 스택
 
-- **번들러**: [Rolldown](https://rolldown.rs/)
-- **런타임**: [Bun](https://bun.sh/)
+- **번들러 & 런타임**: [Bun](https://bun.sh/)
 - **UI**: jQuery
 - **HTML 파싱**: Cheerio
 
