@@ -1,12 +1,6 @@
-FROM lukemathwalker/cargo-chef:latest-rust-slim-trixie as chef
+FROM rust:slim-trixie AS builder
 WORKDIR /app
 
-FROM chef AS planner
-COPY Cargo.toml Cargo.lock ./
-COPY src ./src
-RUN cargo chef prepare --recipe-path recipe.json
-
-FROM chef AS builder
 ARG TARGETPLATFORM
 
 RUN apt-get update && apt-get install -y clang mold && \
@@ -20,12 +14,13 @@ RUN apt-get update && apt-get install -y clang mold && \
     mkdir -p .cargo && \
     printf '[target.%s]\nlinker = "clang"\nrustflags = ["-C", "link-arg=-fuse-ld=mold"]\n' "${RUST_TARGET}" > .cargo/config.toml
 
-COPY --from=planner /app/recipe.json recipe.json
-RUN . /build.env && cargo chef cook --release --recipe-path recipe.json --target ${RUST_TARGET}
-
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
-RUN . /build.env && \
+
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    --mount=type=cache,target=/app/target \
+    . /build.env && \
     cargo build --release --target ${RUST_TARGET} && \
     cp "target/${RUST_TARGET}/release/server" "server"
 
