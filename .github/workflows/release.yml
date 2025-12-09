@@ -201,7 +201,34 @@ jobs:
           bun-version: latest
 
       - name: Deploy on Chrome Webstore
-        run: bunx chrome-webstore-upload-cli upload --auto-publish --source artifacts/extension/safer-dreamcord-extension.crx
+        run: |
+          ACCESS_TOKEN=$(curl -s -X POST https://oauth2.googleapis.com/token \
+            -d "client_id=$CLIENT_ID" \
+            -d "client_secret=$CLIENT_SECRET" \
+            -d "refresh_token=$REFRESH_TOKEN" \
+            -d "grant_type=refresh_token" | jq -r '.access_token')
+
+          UPLOAD_RESULT=$(curl -s -X PUT \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -H "x-goog-api-version: 2" \
+            -T artifacts/extension/safer-dreamcord-extension.crx \
+            "https://www.googleapis.com/upload/chromewebstore/v1.1/items/$EXTENSION_ID")
+
+          echo "Upload result: $UPLOAD_RESULT"
+
+          UPLOAD_STATE=$(echo $UPLOAD_RESULT | jq -r '.uploadState')
+          if [ "$UPLOAD_STATE" != "SUCCESS" ]; then
+            echo "Upload failed: $UPLOAD_RESULT"
+            exit 1
+          fi
+
+          PUBLISH_RESULT=$(curl -s -X POST \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -H "x-goog-api-version: 2" \
+            -H "Content-Length: 0" \
+            "https://www.googleapis.com/chromewebstore/v1.1/items/$EXTENSION_ID/publish")
+
+          echo "Publish result: $PUBLISH_RESULT"
         env:
           EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
