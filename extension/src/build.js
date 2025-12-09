@@ -1,36 +1,26 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { rolldown } from "rolldown";
 
 const projectRoot = process.cwd();
 
 async function buildExtension() {
 	const outputDir = path.join(projectRoot, "dist");
 
-	try {
-		await fs.rm(outputDir, { recursive: true, force: true });
-	} catch (error) {
-		if (error.code !== "ENOENT") {
-			console.error("Error cleaning output directory:", error);
-			throw error;
-		}
-	}
+	await fs.rm(outputDir, { recursive: true, force: true });
 	await fs.mkdir(outputDir, { recursive: true });
 
-	const bundle = await rolldown({
-		input: {
-			background: path.join(projectRoot, "src/background/background.js"),
-			popup: path.join(projectRoot, "src/popup/popup.js"),
-		},
-		output: {
-			dir: path.join(outputDir, "js"),
-			format: "esm",
-			entryFileNames: "[name].js",
-			minify: true,
-		},
+	await Bun.build({
+		entrypoints: [
+			path.join(projectRoot, "src/background/background.js"),
+			path.join(projectRoot, "src/popup/popup.js"),
+		],
+		outdir: outputDir,
+		format: "esm",
+		minify: true,
+		splitting: true,
+		treeshaking: true,
+		naming: "[name].js",
 	});
-
-	await bundle.write();
 
 	await fs.copyFile(
 		path.join(projectRoot, "manifest.json"),
@@ -50,8 +40,6 @@ async function buildExtension() {
 	const imagesSourcePath = path.join(projectRoot, "images");
 	const imagesDestinationPath = path.join(outputDir, "images");
 	await fs.cp(imagesSourcePath, imagesDestinationPath, { recursive: true });
-
-	console.log("Extension built successfully with Rolldown!");
 }
 
-buildExtension().catch(console.error);
+buildExtension();

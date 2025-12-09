@@ -5,9 +5,6 @@
   "scripts": {
     "build": "bun src/build.js"
   },
-  "devDependencies": {
-    "rolldown": "latest"
-  },
   "dependencies": {
     "cheerio": "^1.1.2",
     "jquery": "^3.7.1"
