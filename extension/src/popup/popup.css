@@ -1,180 +1,182 @@
 :root {
-    --bg-primary: #36393f;
-    --bg-secondary: #2f3136;
-    --bg-tertiary: #202225;
-    --text-primary: #ffffff;
-    --text-secondary: #b9bbbe;
-    --accent-color: #5865f2;
-    --success-color: #3ba55d;
-    --danger-color: #ed4245;
-    --warning-color: #faa61a;
-    --font-family: 'Inter', Arial, sans-serif;
-    --border-radius: 5px;
+	--bg-primary: #36393f;
+	--bg-secondary: #2f3136;
+	--bg-tertiary: #202225;
+	--text-primary: #ffffff;
+	--text-secondary: #b9bbbe;
+	--accent-color: #5865f2;
+	--success-color: #3ba55d;
+	--danger-color: #ed4245;
+	--warning-color: #faa61a;
+	--font-family: "Inter", Arial, sans-serif;
+	--border-radius: 5px;
 }
 
 body {
-    width: 380px;
-    padding: 20px;
-    font-family: var(--font-family);
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-    box-sizing: border-box;
+	width: 380px;
+	padding: 20px;
+	font-family: var(--font-family);
+	background-color: var(--bg-secondary);
+	color: var(--text-primary);
+	box-sizing: border-box;
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
 h1 {
-    margin: 0;
-    font-size: 1.75em;
-    font-weight: 700;
-    text-align: center;
-    color: var(--text-primary);
+	margin: 0;
+	font-size: 1.75em;
+	font-weight: 700;
+	text-align: center;
+	color: var(--text-primary);
 }
 
 h2 {
-    margin: 0;
-    font-size: 0.9em;
-    font-weight: 500;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    padding-bottom: 5px;
+	margin: 0;
+	font-size: 0.9em;
+	font-weight: 500;
+	color: var(--text-secondary);
+	text-transform: uppercase;
+	padding-bottom: 5px;
 }
 
 /* Webhook Section */
 .webhooks-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
 .webhook-item {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    background-color: var(--bg-tertiary);
-    padding: 12px;
-    border-radius: var(--border-radius);
-    border: 1px solid transparent;
-    transition: border-color 0.2s ease;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	background-color: var(--bg-tertiary);
+	padding: 12px;
+	border-radius: var(--border-radius);
+	border: 1px solid transparent;
+	transition: border-color 0.2s ease;
 }
 
 /* General Input Styling */
-input[type='text'],
-input[type='number'] {
-    flex: 1;
-    padding: 8px 10px;
-    border: 1px solid var(--bg-tertiary);
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
-    border-radius: var(--border-radius);
-    font-size: 1em;
-    font-family: var(--font-family);
-    transition: border-color 0.2s ease;
-    min-width: 0; /* Prevents flex item from overflowing */
+input[type="text"],
+input[type="number"] {
+	flex: 1;
+	padding: 8px 10px;
+	border: 1px solid var(--bg-tertiary);
+	background-color: var(--bg-tertiary);
+	color: var(--text-primary);
+	border-radius: var(--border-radius);
+	font-size: 1em;
+	font-family: var(--font-family);
+	transition: border-color 0.2s ease;
+	min-width: 0; /* Prevents flex item from overflowing */
 }
 
-input[type='text']:focus,
-input[type='number']:focus {
-    outline: none;
-    border-color: var(--accent-color);
+input[type="text"]:focus,
+input[type="number"]:focus {
+	outline: none;
+	border-color: var(--accent-color);
 }
 
 /* General Button Styling */
 button {
-    padding: 8px 14px;
-    color: var(--text-primary);
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 1em;
-    font-family: var(--font-family);
-    transition: background-color 0.2s ease, opacity 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+	padding: 8px 14px;
+	color: var(--text-primary);
+	border: none;
+	border-radius: var(--border-radius);
+	cursor: pointer;
+	font-weight: 500;
+	font-size: 1em;
+	font-family: var(--font-family);
+	transition:
+		background-color 0.2s ease,
+		opacity 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 button:hover {
-    opacity: 0.9;
+	opacity: 0.9;
 }
 
 .add-button {
-    background-color: var(--accent-color);
-    width: 100%;
+	background-color: var(--accent-color);
+	width: 100%;
 }
 
 .webhook-item .save-button {
-    padding: 6px 12px;
-    background-color: var(--accent-color);
+	padding: 6px 12px;
+	background-color: var(--accent-color);
 }
 
 .webhook-item .save-button.modified {
-    background-color: var(--success-color);
+	background-color: var(--success-color);
 }
 
 .webhook-item .delete-button {
-    padding: 6px;
-    background-color: var(--danger-color);
+	padding: 6px;
+	background-color: var(--danger-color);
 }
 
 /* Status Message */
 #status-message {
-    color: var(--success-color);
-    font-size: 0.9em;
-    margin: 0;
-    min-height: 18px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    text-align: center;
-    font-weight: 500;
+	color: var(--success-color);
+	font-size: 0.9em;
+	margin: 0;
+	min-height: 18px;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	text-align: center;
+	font-weight: 500;
 }
 
 #status-message.show {
-    opacity: 1;
+	opacity: 1;
 }
 
 #status-message.error {
-    color: var(--danger-color);
+	color: var(--danger-color);
 }
 
 /* Divider */
 .divider {
-    border-top: 1px solid var(--bg-primary);
-    margin: 5px 0;
+	border-top: 1px solid var(--bg-primary);
+	margin: 5px 0;
 }
 
 /* Debug Section */
 .debug-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: var(--bg-tertiary);
-    padding: 15px;
-    border-radius: var(--border-radius);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	background-color: var(--bg-tertiary);
+	padding: 15px;
+	border-radius: var(--border-radius);
 }
 
 .debug-controls {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+	display: flex;
+	gap: 8px;
+	align-items: center;
 }
 
 #debug-challenge-id {
-    background-color: var(--bg-secondary);
+	background-color: var(--bg-secondary);
 }
 
 .debug-button {
-    background-color: var(--warning-color);
+	background-color: var(--warning-color);
 }
 
 .clear-button {
-    background-color: var(--danger-color);
+	background-color: var(--danger-color);
 }

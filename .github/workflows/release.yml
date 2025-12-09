@@ -105,14 +105,25 @@ jobs:
           name: versioned-files
           path: .
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies and build extension
+        working-directory: extension
+        run: |
+          bun install
+          bun run build
+
       - name: Get version from previous job output
         id: version
         run: echo "version=${{ needs.prepare-versions.outputs.version }}" >> $GITHUB_OUTPUT
 
-      - name: Create extension ZIP
+      - name: Create extension ZIP from dist folder
         run: |
-          cd extension
-          zip -r ../safer-dreamcord-extension.zip . -x "*.git*"
+          cd extension/dist
+          zip -r ../../safer-dreamcord-extension.zip .
 
       - name: Build CRX
         uses: cardinalby/webext-buildtools-chrome-crx-action@v2
@@ -135,30 +146,28 @@ jobs:
     if: github.ref_type == 'tag'
     needs: [build-docker, build-extension]
     steps:
-      - name: Checkout code
+      - name: Checkout main branch
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
-      - name: Get version from previous job output
-        id: version
-        run: echo "version=${{ needs.prepare-versions.outputs.version }}" >> $GITHUB_OUTPUT
+      - name: Setup Git
+        uses: actions4git/setup-git@v1
 
-      - name: Re-update versions for commit (to ensure current state)
+      - name: Download versioned files
+        uses: actions/download-artifact@v4
+        with:
+          name: versioned-files
+          path: .
+
+      - name: Update versions and commit to main
         run: |
-          VERSION=${{ steps.version.outputs.version }}
-          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${VERSION}\" /" extension/manifest.json
-          sed -i "s/^version = \".*\"/version = \"${VERSION}\" /" server/Cargo.toml
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add extension/manifest.json server/Cargo.toml
-          if git diff --staged --quiet; then
-            echo "No changes to commit, files are already up-to-date."
-          else
-            git commit -m "bump versions to v${VERSION}"
-            git push origin HEAD:${{ github.ref_name }} --force
-          fi
+          git commit -m "bump versions to ${{ github.ref_name }}"
+          git push origin main
+          git tag -f ${{ github.ref_name }} HEAD
+          git push origin --tags --force
 
   create-release:
     name: Create Release
