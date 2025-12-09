@@ -14,10 +14,10 @@ RUN xx-apt-get update && xx-apt-get install -y \
     g++ \
     libc6-dev
 
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
 COPY src ./src
 
-ENV RUSTFLAGS="-C linker=clang -C link-arg=-fuse-ld=mold"
+ENV RUSTFLAGS="-C linker=xx-clang -C link-arg=-fuse-ld=mold"
 
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/app/target \

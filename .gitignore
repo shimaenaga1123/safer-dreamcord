@@ -8,3 +8,6 @@ target/
 .env
 .DS_Store
 *.pem
+
+Cargo.lock
+bun.lock
