@@ -207,3 +207,11 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+
+      - name: Deploy on Firefox Add-ons (AMO)
+        uses: wdzeng/firefox-addon@v1
+        with:
+          addon-guid: safer-dreamcord@shimaenaga.dev
+          xpi-path: artifacts/extension/safer-dreamcord-extension.crx
+          jwt-issuer: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          jwt-secret: ${{ secrets.FIREFOX_JWT_SECRET }}
