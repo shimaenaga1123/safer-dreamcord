@@ -1,14 +1,8 @@
 use crate::modules::types::*;
 use anyhow::Result;
 use once_cell::sync::Lazy;
-use scraper::{Html, Selector};
+use dom_query::Document;
 
-static NICKNAME_SEL: Lazy<Selector> =
-    Lazy::new(|| Selector::parse(".user-profile .nickname").unwrap());
-static INTRO_SEL: Lazy<Selector> =
-    Lazy::new(|| Selector::parse(".user-profile .intro-text").unwrap());
-static IMG_SEL: Lazy<Selector> =
-    Lazy::new(|| Selector::parse(".user-profile .user-icon img").unwrap());
 static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
     reqwest::Client::builder()
         .pool_max_idle_per_host(10)
@@ -39,26 +33,25 @@ pub async fn get_user(user_id: &u32) -> Result<UserInfo> {
         .text()
         .await?;
 
-    let document = Html::parse_document(&text);
+    let document = Document::from(text.as_str());
 
-    let extract_text = |selector: &Selector| -> String {
+    let extract_text = |selector: &str| -> String {
         document
             .select(selector)
-            .next()
-            .map(|el| el.text().collect::<String>())
-            .unwrap_or_default()
+            .text()
+            .to_string()
             .trim()
             .replace('`', "'")
     };
 
-    let nickname = extract_text(&NICKNAME_SEL);
-    let introduction = extract_text(&INTRO_SEL);
+    let nickname = extract_text(".user-profile .nickname");
+    let introduction = extract_text(".user-profile .intro-text");
 
     let profile_image = document
-        .select(&IMG_SEL)
-        .next()
-        .and_then(|el| el.value().attr("src"))
-        .unwrap_or("https://static.dreamhack.io/main/v2/img/amo.1a05d65.png")
+        .select(".user-profile .user-icon img")
+        .attr("src")
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| "https://static.dreamhack.io/main/v2/img/amo.1a05d65.png".to_string())
         .trim()
         .replace('`', "'");
 
