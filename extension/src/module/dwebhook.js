@@ -113,9 +113,7 @@ function validateMessage(message, expectedSolver, expectedChallengeId) {
 }
 
 export async function sendToAll(challengeId, test = false) {
-	const browserAPI = chrome;
-
-	let solver = await browserAPI.storage.sync.get(["userid"]);
+	let solver = await chrome.storage.sync.get(["userid"]);
 	solver = solver.userid;
 
 	if (!solver) {
@@ -129,7 +127,7 @@ export async function sendToAll(challengeId, test = false) {
 				const element = $("a.field-nickname");
 				if (element.length) {
 					solver = parseInt(element.attr("href").split("/").pop(), 10);
-					await browserAPI.storage.sync.set({ userid: solver });
+					await chrome.storage.sync.set({ userid: solver });
 				}
 			} else {
 				throw new Error(`Failed to fetch mypage, status: ${response.status}`);
@@ -141,7 +139,7 @@ export async function sendToAll(challengeId, test = false) {
 	}
 
 	try {
-		const result = await browserAPI.storage.sync.get(["webhooks"]);
+		const result = await chrome.storage.sync.get(["webhooks"]);
 		const webhooks = result.webhooks || [];
 
 		const promises = webhooks.map((webhook) =>

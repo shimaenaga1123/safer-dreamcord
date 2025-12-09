@@ -1,9 +1,7 @@
 import { sendToAll } from "../module/dwebhook.js";
 
-const browserAPI = chrome; // chrome || browser || window.browser || window.chrome;
-
-if (browserAPI.webRequest?.onCompleted) {
-	browserAPI.webRequest.onCompleted.addListener(
+if (chrome.webRequest?.onCompleted) {
+	chrome.webRequest.onCompleted.addListener(
 		async (details) => {
 			if (
 				details.url.includes("/api/v1/wargame/challenges/") &&
