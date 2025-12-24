@@ -1,9 +1,8 @@
-FROM rust:slim-trixie AS builder
+FROM rust:alpine AS builder
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    mold \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk update && apk add --no-cache mold \
+    && rm -rf /var/cache/apk/*
 
 COPY Cargo.toml ./
 COPY src ./src
@@ -13,7 +12,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     mold -run cargo build --release --target-dir ./target && \
     cp target/$(cargo --print-target-triple)/release/server /server
 
-FROM debian:trixie-slim
+FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /server .
