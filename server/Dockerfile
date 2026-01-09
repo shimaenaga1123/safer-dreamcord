@@ -1,26 +1,20 @@
-FROM --platform=$BUILDPLATFORM rust:alpine AS builder
+FROM --platform=$BUILDPLATFORM shimaenaga1123/alpine-rust-zigbuild:latest AS builder
 
 ARG TARGETARCH
 WORKDIR /app
-
-RUN apk add --no-cache zig git musl-dev cargo-zigbuild
-
-RUN case "$TARGETARCH" in \
-      "amd64") echo "x86_64-unknown-linux-musl" > /rust_target.txt ;; \
-      "arm64") echo "aarch64-unknown-linux-musl" > /rust_target.txt ;; \
-      *) exit 1 ;; \
-    esac
-
-RUN rustup target add $(cat /rust_target.txt)
 
 COPY Cargo.toml ./
 COPY src ./src
 
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/app/target \
-    TARGET=$(cat /rust_target.txt) && \
-    cargo zigbuild --release --target $TARGET && \
-    cp target/$TARGET/release/server /server
+    case "$TARGETARCH" in \
+      "amd64") RUST_TARGET="x86_64-unknown-linux-musl" ;; \
+      "arm64") RUST_TARGET="aarch64-unknown-linux-musl" ;; \
+      *) exit 1 ;; \
+    esac && \
+    cargo zigbuild --release --target $RUST_TARGET && \
+    cp target/$RUST_TARGET/release/server /server
 
 FROM scratch
 COPY --from=builder /server /server
