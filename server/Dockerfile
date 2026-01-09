@@ -1,22 +1,17 @@
-FROM rust:alpine AS builder
+FROM rust:slim-bookworm AS builder
 WORKDIR /app
-
-RUN apk update && apk add --no-cache mold \
-    && rm -rf /var/cache/apk/*
-
+RUN apt-get update && apt-get install -y musl-tools mold \
+    && rm -rf /var/lib/apt/lists/*
+RUN rustup target add $(uname -m)-unknown-linux-musl
 COPY Cargo.toml ./
 COPY src ./src
-
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/app/target \
-    mold -run cargo build --release --target-dir ./target && \
-    cp target/$(cargo --print-target-triple)/release/server /server
+    RUSTFLAGS="-C target-feature=+crt-static -C linker=musl-gcc -C link-arg=-fuse-ld=mold" \
+    cargo build --release --target $(uname -m)-unknown-linux-musl && \
+    cp target/$(uname -m)-unknown-linux-musl/release/server /server
 
-FROM alpine:latest
-WORKDIR /app
-
-COPY --from=builder /server .
-
+FROM scratch
+COPY --from=builder /server /server
 EXPOSE 8080
-
-CMD ["./server"]
+ENTRYPOINT ["/server"]
