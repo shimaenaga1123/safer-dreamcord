@@ -1,15 +1,26 @@
-FROM rust:slim-bookworm AS builder
+FROM --platform=$BUILDPLATFORM rust:alpine AS builder
+
+ARG TARGETARCH
 WORKDIR /app
-RUN apt-get update && apt-get install -y musl-tools mold \
-    && rm -rf /var/lib/apt/lists/*
-RUN rustup target add $(uname -m)-unknown-linux-musl
+
+RUN apk add --no-cache zig git musl-dev cargo-zigbuild
+
+RUN case "$TARGETARCH" in \
+      "amd64") echo "x86_64-unknown-linux-musl" > /rust_target.txt ;; \
+      "arm64") echo "aarch64-unknown-linux-musl" > /rust_target.txt ;; \
+      *) exit 1 ;; \
+    esac
+
+RUN rustup target add $(cat /rust_target.txt)
+
 COPY Cargo.toml ./
 COPY src ./src
+
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/app/target \
-    RUSTFLAGS="-C target-feature=+crt-static -C linker=musl-gcc -C link-arg=-fuse-ld=mold" \
-    cargo build --release --target $(uname -m)-unknown-linux-musl && \
-    cp target/$(uname -m)-unknown-linux-musl/release/server /server
+    TARGET=$(cat /rust_target.txt) && \
+    cargo zigbuild --release --target $TARGET && \
+    cp target/$TARGET/release/server /server
 
 FROM scratch
 COPY --from=builder /server /server
