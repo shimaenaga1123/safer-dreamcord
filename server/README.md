@@ -32,7 +32,7 @@ docker compose up -d
 docker run -d \
   -e DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/... \
   -p 8080:8080 \
-  ghcr.io/shimaenaga1123/safer-dreamcord:latest
+  shimaenaga1123/safer-dreamcord:latest
 ```
 
 ### 직접 빌드

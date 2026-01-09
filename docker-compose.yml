@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   safer-dreamcord:
-    image: ghcr.io/shimaenaga1123/safer-dreamcord:latest
+    image: shimaenaga1123/safer-dreamcord:latest
     container_name: safer-dreamcord
     ports:
       - "8080:8080"
